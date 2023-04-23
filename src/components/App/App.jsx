@@ -28,7 +28,7 @@ export const App = () => {
       <Helmet>
         <meta charSet="utf-8" />
         <title>Phonebook</title>
-        <link rel="canonical" href="#" />
+        <link rel="canonical" href="https://w-sei.github.io/goit-react-hw-08-phonebook/" />
         <meta name="description" content="My Phonebook" />
       </Helmet>
       <GlobalStyles />
