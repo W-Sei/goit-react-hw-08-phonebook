@@ -4,7 +4,6 @@ import {
   StyledNavLink,
 } from 'components/CommonStyles/CommonStyles.styled';
 import { GiRotaryPhone } from 'react-icons/gi';
-// GiRotaryPhone
 
 export const Navigation = () => {
   const { isLoggedIn } = useAuth();
