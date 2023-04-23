@@ -1,19 +1,26 @@
-import React from 'react';
-import { ContactsInput, LabelTitle, NameInputWrapper } from './FilterContact.styled';
-import { useDispatch } from 'react-redux';
-import { setFilter } from 'redux/filterSlice';
+import { DebounceInput } from 'react-debounce-input';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFilter } from 'redux/contacts/selectors';
+import { setFilterValue } from 'redux/contacts/filterSlice';
+import { StyledFilter, StyledInput } from './FilterContact.styled';
 
-
-export const FilterContact = () => {
+export const Filter = () => {
+  const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
-  const changeFieldFilter = evt => dispatch(setFilter(evt.currentTarget.value));
+  const handleFilterChange = e => dispatch(setFilterValue(e.target.value));
 
   return (
-    <NameInputWrapper>
-      <LabelTitle>Find contacts by name</LabelTitle>
-      <ContactsInput name="filter" type="text" onChange={changeFieldFilter} />
-    </NameInputWrapper>
+    <StyledFilter>
+      Find contacts by name
+      <DebounceInput
+        element={StyledInput}
+        type="text"
+        name="filter"
+        value={filter}
+        minLength={2}
+        debounceTimeout={300}
+        onChange={handleFilterChange}
+      />
+    </StyledFilter>
   );
 };
-
-

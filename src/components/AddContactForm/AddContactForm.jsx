@@ -1,76 +1,80 @@
-import React from 'react';
 import { Formik } from 'formik';
-import Notiflix from 'notiflix';
-import { object, string } from 'yup';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { addContact } from '../../redux/operations';
-import { selectContacts, selectError } from '../../redux/selectors';
+import { Notify } from 'notiflix';
+import * as Yup from 'yup';
+
+import { useSelector, useDispatch } from 'react-redux';
+
+import { addContact } from 'redux/contacts/operations';
+import { selectContacts } from 'redux/contacts/selectors';
 
 import {
-  FormSection,
-  AddNumberInput,
-  Button,
-  InputTitle,
-  ErrorMes,
-} from './AddContactForm.styled';
+  StyledForm,
+  StyledFormField,
+  StyledLabel,
+  StyledInput,
+  StyledButton,
+  StyledErrorMessage,
+} from 'components/CommonStyles/CommonStyles.styled';
 
-const userSchema = object({
-  name: string().required(),
-  phone: string().required().min(5).max(20),
+const nameRegex = /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/;
+
+const numberRegex = /^\+?(\d{1,2})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+
+const formSchema = Yup.object().shape({
+  name: Yup.string()
+    .trim()
+    .matches(nameRegex, {
+      message:
+        "Invalid name. Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan.",
+    })
+    .required('Name is a required field'),
+
+  number: Yup.string()
+    .trim()
+    .matches(numberRegex, {
+      message:
+        'Invalid number. Phone number must be digits and can contain spaces, dashes, parentheses and can start with +. For example: (123) 456-7890, 123-456-7890, 123.456.7890, 1234567890, +91 (123) 456-7890',
+    })
+    .required('Number is a required field'),
 });
 
-export const AddContactForm = () => {
-  const dispatch = useDispatch();
+export const ContactForm = () => {
   const contacts = useSelector(selectContacts);
-  const error = useSelector(selectError);
+  const dispatch = useDispatch();
 
-  function handleSubmit(values, { resetForm }) {
-    const isName = contacts.some(
-      contact => contact.name.toLowerCase() === values.name.toLowerCase()
+  const handleSubmit = (values, { resetForm }) => {
+    const normalizedName = values.name.toLowerCase();
+    const nameExists = contacts.find(
+      ({ name }) => name.toLowerCase() === normalizedName
     );
-
-    if (isName) {
-      Notiflix.Notify.info(`${values.nameContact} is already in your contacts`);
-      return;
-    } else {
-      dispatch(addContact(values));
-      resetForm();
+    if (nameExists) {
+      return Notify.info(`${values.name} is already in contacts!`);
     }
-  }
 
-  if (error) {
-    Notiflix.Notify.failure(`${error} occured.`);
-  }
+    dispatch(addContact(values));
+    resetForm();
+  };
 
   return (
     <Formik
-      initialValues={{ name: '', phone: '' }}
+      initialValues={{ name: '', number: '' }}
+      validationSchema={formSchema}
       onSubmit={handleSubmit}
-      validationSchema={userSchema}
     >
-      <FormSection>
-        <InputTitle>Name</InputTitle>
-        <AddNumberInput
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-        />
-        <ErrorMes name="name" component="div" />
-        <InputTitle>Number</InputTitle>
-        <AddNumberInput
-          type="tel"
-          name="phone"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-        />
-        <ErrorMes name="phone" component="div" />
-        <Button type="submit">Add contact</Button>
-      </FormSection>
+      <StyledForm>
+        <StyledFormField>
+          <StyledLabel>Name</StyledLabel>
+          <StyledInput type="text" name="name" />
+          <StyledErrorMessage name="name" component="div" />
+        </StyledFormField>
+
+        <StyledFormField>
+          <StyledLabel>Number</StyledLabel>
+          <StyledInput type="tel" name="number" />
+          <StyledErrorMessage name="number" component="div" />
+        </StyledFormField>
+        <StyledButton type="submit">Add contacts</StyledButton>
+      </StyledForm>
     </Formik>
   );
 };
-
