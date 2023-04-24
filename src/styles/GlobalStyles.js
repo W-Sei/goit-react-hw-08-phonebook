@@ -3,6 +3,7 @@ import 'modern-normalize';
 import image from '../images/button.png';
 import imageBgi from '../images/form.png';
 
+
 export const GlobalStyles = createGlobalStyle`
 html {
   box-sizing: border-box;
@@ -16,7 +17,7 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, 'Berkshire Swash', cursive,
+  font-family: -apple-system, 'Sedgwick Ave Display', cursive,
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
