@@ -22,9 +22,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.71;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   background-image: url(${imageBgi});
   background-size: cover;
 }
